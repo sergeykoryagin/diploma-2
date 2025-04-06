@@ -1,0 +1,111 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// Модель пользователя – используется как для локальной аутентификации (например, через credentials),
+// так и для OAuth (например, через Yandex). Рекомендуется использовать cuid() для id.
+model User {
+  id             String    @id @default(cuid())
+  name           String?
+  email          String?   @unique
+  image          String?
+  tags           String[]  // Теги пользователя для рекомендательной системы
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+
+  // Связи с другими моделями (используются адаптером Auth.js)
+  accounts       Account[]
+  sessions       Session[]
+  
+  // Ваши дополнительные модели (например, маршруты)
+  routes         Route[]
+
+  @@map("users")
+}
+
+// Модель для хранения данных учётных записей, связанных с OAuth провайдерами (Yandex, и др.)
+model Account {
+  id                String   @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  user              User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+  @@map("accounts")
+}
+
+// Модель для хранения сессий пользователей.
+// Если вы используете стратегию "database" для сессий, то данные сессии будут сохраняться в этой таблице.
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("sessions")
+}
+
+// Модель для верификационных токенов (например, для passwordless или email верификации)
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@id([identifier, token])
+  @@map("verification_tokens")
+}
+
+// Модель маршрута, созданного пользователями (ваша текущая модель)
+model Route {
+  id          String       @id @default(cuid())
+  title       String
+  description String?
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+
+  // Связь: маршрут создаётся пользователем (автором)
+  authorId    String
+  author      User         @relation(fields: [authorId], references: [id])
+  
+  // Каждый маршрут может содержать несколько точек
+  points      RoutePoint[]
+
+  @@map("routes")
+}
+
+// Модель точки маршрута
+model RoutePoint {
+  id          String   @id @default(cuid())
+  routeId     String
+  latitude    Float
+  longitude   Float
+  title       String?
+  orderIndex  Int?
+  
+  route       Route    @relation(fields: [routeId], references: [id])
+
+  @@map("route_points")
+}
