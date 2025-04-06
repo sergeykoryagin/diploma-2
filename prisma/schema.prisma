@@ -14,7 +14,7 @@ model User {
   name           String?
   email          String?   @unique
   image          String?
-  tags           String[]  // Теги пользователя для рекомендательной системы
+  tags           String[]  @db.VarChar(50) // Теги пользователя для рекомендательной системы
   createdAt      DateTime  @default(now())
   updatedAt      DateTime  @updatedAt
 
@@ -83,6 +83,7 @@ model Route {
   id          String       @id @default(cuid())
   title       String
   description String?
+  tags        String[]     @db.VarChar(50) // Теги маршрута
   createdAt   DateTime     @default(now())
   updatedAt   DateTime     @updatedAt
 
