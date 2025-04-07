@@ -46,7 +46,7 @@ export async function GET(request: NextRequest) {
               longitude: true,
             },
           },
-        },
+        } as Prisma.RouteSelect,
         orderBy: {
           createdAt: 'desc',
         },

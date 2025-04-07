@@ -7,7 +7,11 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "seed": "tsx prisma/seed.ts"
+    "prisma:generate": "prisma generate",
+    "prisma:migrate": "prisma migrate dev",
+    "prisma:studio": "prisma studio",
+    "seed:users-routes": "tsx prisma/scripts/seed.ts",
+    "seed:recommendations": "tsx prisma/scripts/seed-recommendations.ts"
   },
   "dependencies": {
     "@auth/core": "^0.38.0",

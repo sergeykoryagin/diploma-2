@@ -35,9 +35,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
             await prisma.user.create({
               data: {
                 email: user.email || "",
-                name: user.name || "",
-                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                // @ts-expect-error
+                name: user.name || "",              
                 image: user.image || "",
                 tags: [],
               },

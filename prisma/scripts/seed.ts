@@ -1,10 +1,7 @@
 import { PrismaClient } from '@prisma/client';
-import { getRandomTags, tags } from './mock-tags';
+import { getRandomTags } from '../mock-tags';
 
 const prisma = new PrismaClient();
-
-// Координаты Казани и окрестностей
-const KAZAN_CENTER = { lat: 55.7887, lng: 49.1221 };
 
 // Популярные места в Казани
 const KAZAN_LANDMARKS = [
@@ -219,7 +216,12 @@ function generateRandomRoute(userId: string) {
   const description = descriptions[Math.floor(Math.random() * descriptions.length)];
   
   // Генерируем точки маршрута
-  const points = [];
+  const points: {
+    latitude: number;
+    longitude: number;
+    title: string;
+    orderIndex: number;
+  }[] = [];
   
   // Первая точка - выбранный ориентир
   points.push({
