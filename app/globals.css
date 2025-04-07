@@ -1,12 +1,23 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+
 :root {
   --background: #ffffff;
   --foreground: #171717;
+  --button-primary: #fc3f1d;
+  --button-primary-hover: #e23517;
+  --button-secondary-hover: #f2f2f2;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
     --background: #0a0a0a;
     --foreground: #ededed;
+    --button-primary: #fc3f1d;
+    --button-primary-hover: #e23517;
+    --button-secondary-hover: #1a1a1a;
   }
 }
 

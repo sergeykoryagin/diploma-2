@@ -9,7 +9,17 @@ const nextConfig: NextConfig = {
         port: '',
         pathname: '/**',
       },
+            {
+        protocol: 'https',
+        hostname: 'yastatic.net',
+        port: '',
+        pathname: '/**',
+      },
     ],
+  },
+  webpack: (config) => {
+    config.externals = [...(config.externals || []), { canvas: 'canvas' }]; // Fix for Yandex Maps
+    return config;
   },
 };
 
