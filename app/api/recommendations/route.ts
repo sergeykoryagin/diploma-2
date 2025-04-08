@@ -2,12 +2,8 @@ import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/db/prisma';
 import { recommendationService } from '@/lib/services/recommendation.service';
 import { auth } from '@/lib/auth';
-import { z } from 'zod';
-
-const querySchema = z.object({
-  limit: z.coerce.number().min(1).max(100).default(10),
-  page: z.coerce.number().min(1).default(1),
-});
+import { recommendationsQuerySchema } from '@/lib/api/schemas/recommendations';
+import { ZodError } from 'zod';
 
 export async function GET(request: NextRequest) {
   try {
@@ -17,7 +13,7 @@ export async function GET(request: NextRequest) {
     }
 
     const { searchParams } = new URL(request.url);
-    const { limit, page } = querySchema.parse({
+    const { limit, page } = recommendationsQuerySchema.parse({
       limit: searchParams.get('limit'),
       page: searchParams.get('page'),
     });
@@ -74,7 +70,7 @@ export async function GET(request: NextRequest) {
     });
   } catch (error) {
     console.error('Error fetching recommendations:', error);
-    if (error instanceof z.ZodError) {
+    if (error instanceof ZodError) {
       return NextResponse.json({ error: 'Invalid query parameters' }, { status: 400 });
     }
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });

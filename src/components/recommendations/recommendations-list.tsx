@@ -62,7 +62,7 @@ export default function RecommendationsList({ viewMode }: RecommendationsListPro
         const responseData = await response.json();
         
         // Координаты центра Казани
-        const kazanCenter = [49.106414, 55.796127];
+        const kazanCenter = [55.796127, 49.106414];
         
         const routesWithCoordinates = responseData.routes.map((route: Route) => ({
           ...route,

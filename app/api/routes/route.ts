@@ -1,13 +1,8 @@
 import { prisma } from '@/lib/db/prisma';
 import { Prisma } from '@prisma/client';
 import { NextRequest, NextResponse } from 'next/server';
-import { z } from 'zod';
-
-const QuerySchema = z.object({
-  page: z.coerce.number().min(1).default(1),
-  limit: z.coerce.number().min(1).max(100).default(10),
-  tags: z.string().optional().transform(tags => tags?.split(',').filter(Boolean)),
-});
+import { routesQuerySchema } from '@/lib/api/schemas/routes';
+import { ZodError } from 'zod';
 
 export async function GET(request: NextRequest) {
   try {
@@ -18,7 +13,7 @@ export async function GET(request: NextRequest) {
       tags: searchParams.get('tags') || '',
     };
     console.log(params);
-    const validatedParams = QuerySchema.parse(params);
+    const validatedParams = routesQuerySchema.parse(params);
 
     const { page, limit, tags } = validatedParams;
     const skip = (page - 1) * limit;
@@ -68,7 +63,7 @@ export async function GET(request: NextRequest) {
     });
   } catch (error) {
     console.error('Error fetching routes:', error);
-    if (error instanceof z.ZodError) {
+    if (error instanceof ZodError) {
       return NextResponse.json({ error: 'Invalid query parameters' }, { status: 400 });
     }
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });

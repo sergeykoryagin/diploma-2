@@ -27,7 +27,7 @@ export default function MapView({ routes }: MapViewProps) {
   const metaRef = useRef<HTMLMetaElement | null>(null);
 
   // Центр Казани
-  const defaultCenter = [49.106414, 55.796127];
+  const defaultCenter = [55.796127, 49.106414];
 
   useEffect(() => {
     // Проверяем, существует ли уже мета-тег referrer

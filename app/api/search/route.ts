@@ -1,13 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/db/prisma';
 import { recommendationService } from '@/lib/services/recommendation.service';
-import { z } from 'zod';
-
-const querySchema = z.object({
-  query: z.string().min(1),
-  limit: z.coerce.number().min(1).max(100).default(10),
-  page: z.coerce.number().min(1).default(1),
-});
+import { searchQuerySchema } from '@/lib/api/schemas/search';
+import { ZodError } from 'zod';
 
 // Функция для подготовки поискового запроса в формат для рекомендательной системы
 function prepareSearchQuery(query: string): string {
@@ -21,7 +16,7 @@ function prepareSearchQuery(query: string): string {
 export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
-    const params = querySchema.parse({
+    const params = searchQuerySchema.parse({
       query: searchParams.get('query'),
       limit: searchParams.get('limit'),
       page: searchParams.get('page'),
@@ -88,7 +83,7 @@ export async function GET(request: NextRequest) {
     });
   } catch (error) {
     console.error('Error searching routes:', error);
-    if (error instanceof z.ZodError) {
+    if (error instanceof ZodError) {
       return NextResponse.json({ error: 'Invalid query parameters' }, { status: 400 });
     }
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
