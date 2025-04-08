@@ -4,4 +4,6 @@ export * from './tags';
 export * from './routes';
 export * from './recommendations';
 export * from './search';
-export * from './common'; 
+export * from './common';
+export * from './comments';
+export * from './interactions'; 

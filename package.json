@@ -11,7 +11,8 @@
     "prisma:migrate": "prisma migrate dev",
     "prisma:studio": "prisma studio",
     "seed:users-routes": "tsx prisma/scripts/seed.ts",
-    "seed:recommendations": "tsx prisma/scripts/seed-recommendations.ts"
+    "seed:recommendations": "tsx prisma/scripts/seed-recommendations.ts",
+    "seed:interactions": "tsx prisma/scripts/seed-interactions.ts"
   },
   "dependencies": {
     "@auth/core": "^0.38.0",
@@ -28,6 +29,7 @@
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
+    "@faker-js/faker": "^9.6.0",
     "@tailwindcss/postcss": "^4.1.3",
     "@types/bcrypt": "^5.0.2",
     "@types/node": "^20",

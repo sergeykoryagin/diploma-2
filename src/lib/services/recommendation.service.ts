@@ -9,14 +9,6 @@ interface QueryInput {
   n_results?: number;
 }
 
-interface RouteData {
-  id: string;
-  tags: string[];
-  title?: string;
-  description?: string;
-  points?: { name: string }[];
-}
-
 export class RecommendationService {
   private readonly baseUrl: string;
   private readonly collectionName: string;

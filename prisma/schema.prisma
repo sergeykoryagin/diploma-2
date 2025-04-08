@@ -24,6 +24,11 @@ model User {
   
   // Ваши дополнительные модели (например, маршруты)
   routes         Route[]
+  
+  // Новые связи для комментариев, лайков и избранного
+  comments       Comment[]     // Комментарии, оставленные пользователем
+  likes          Like[]        // Лайки, поставленные пользователем
+  favorites      Favorite[]    // Маршруты, добавленные в избранное
 
   @@map("users")
 }
@@ -93,6 +98,14 @@ model Route {
   
   // Каждый маршрут может содержать несколько точек
   points      RoutePoint[]
+  
+  // Новые связи для комментариев, лайков и избранного
+  comments    Comment[]    // Комментарии к маршруту
+  likes       Like[]       // Лайки маршрута
+  favorites   Favorite[]   // Пользователи, добавившие маршрут в избранное
+  
+  // Виртуальные поля для агрегации (не сохраняются в БД)
+  likesCount  Int          @default(0) // Количество лайков
 
   @@map("routes")
 }
@@ -106,7 +119,60 @@ model RoutePoint {
   title       String?
   orderIndex  Int?
   
-  route       Route    @relation(fields: [routeId], references: [id])
+  route       Route    @relation(fields: [routeId], references: [id], onDelete: Cascade)
 
   @@map("route_points")
+}
+
+// Модель комментария к маршруту
+model Comment {
+  id          String   @id @default(cuid())
+  text        String   @db.Text
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  // Связи с пользователем и маршрутом
+  userId      String
+  routeId     String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  route       Route    @relation(fields: [routeId], references: [id], onDelete: Cascade)
+  
+  // Родительский комментарий (для вложенных комментариев/ответов)
+  parentId    String?
+  parent      Comment? @relation("CommentReplies", fields: [parentId], references: [id], onDelete: SetNull)
+  replies     Comment[] @relation("CommentReplies")
+
+  @@map("comments")
+}
+
+// Модель лайка маршрута
+model Like {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  
+  // Связи с пользователем и маршрутом
+  userId    String
+  routeId   String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  route     Route    @relation(fields: [routeId], references: [id], onDelete: Cascade)
+  
+  // Уникальный индекс для предотвращения дублирования лайков
+  @@unique([userId, routeId])
+  @@map("likes")
+}
+
+// Модель избранных маршрутов
+model Favorite {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  
+  // Связи с пользователем и маршрутом
+  userId    String
+  routeId   String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  route     Route    @relation(fields: [routeId], references: [id], onDelete: Cascade)
+  
+  // Уникальный индекс для предотвращения дублирования
+  @@unique([userId, routeId])
+  @@map("favorites")
 }
